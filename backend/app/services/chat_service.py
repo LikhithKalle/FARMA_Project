@@ -221,14 +221,14 @@ class ChatService:
                     session.context.district = user_msg
                     session.context.state = "Unknown" 
                     response_text = self._tr('manual_fail', language, input=user_msg)
-                    options = ["Red", "Black", "Sandy", "Loam", "Clay", "Other"]
+                    options = ["Red", "Black", "Sandy", "Loam", "Clay", "Alluvial"]
                     input_type = "options"
                     session.state = "ASK_SOIL"
 
         elif session.state == "CONFIRM_LOCATION":
              if user_msg.lower() == "yes" or user_msg == "Yes":
                  response_text = self._tr('ask_soil', language)
-                 options = ["Red", "Black", "Sandy", "Loam", "Clay", "Other"]
+                 options = ["Red", "Black", "Sandy", "Loam", "Clay", "Alluvial"]
                  input_type = "options"
                  session.state = "ASK_SOIL"
              else:
@@ -237,16 +237,11 @@ class ChatService:
                  session.state = "ASK_LOCATION"
 
         elif session.state == "ASK_SOIL":
-            if user_msg == "Other":
-                response_text = self._tr('ask_soil_manual', language)
-                input_type = "text"
-                session.state = "ASK_SOIL_MANUAL"
-            else:
-                session.context.soilType = user_msg
-                response_text = self._tr('ask_season', language)
-                options = ["Kharif", "Rabi", "Zaid"]
-                input_type = "options"
-                session.state = "ASK_SEASON"
+            session.context.soilType = user_msg
+            response_text = self._tr('ask_season', language)
+            options = ["Kharif", "Rabi", "Zaid"]
+            input_type = "options"
+            session.state = "ASK_SEASON"
 
         elif session.state == "ASK_SOIL_MANUAL":
             session.context.soilType = raw_msg # Use raw input for manual soil

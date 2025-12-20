@@ -35,6 +35,7 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
   String? _sessionId;
   bool _isLoading = false;
   int? _animatingMessageIndex; // Track which message is currently animating
+  bool _isTtsEnabled = true; // Speaker on by default
   
   // Interaction State
   List<String>? _currentOptions;
@@ -64,6 +65,7 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
   }
 
   Future<void> _speakText(String text) async {
+    if (!_isTtsEnabled) return; // Don't speak if muted
     _updateTtsLanguage();
     await _flutterTts.speak(text);
   }
@@ -215,21 +217,37 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: primaryColor.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.smart_toy, color: primaryColor, size: 20),
+              child: const Icon(Icons.smart_toy, color: primaryColor, size: 18),
             ),
-            const SizedBox(width: 12),
-            Text(TranslationService.tr('farm_assistant'), style: GoogleFonts.lexend(fontWeight: FontWeight.bold, color: textColor)),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                TranslationService.tr('farm_assistant'), 
+                style: GoogleFonts.lexend(fontWeight: FontWeight.bold, color: textColor, fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         backgroundColor: bgColor,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor),
         actions: [
+            IconButton(
+              icon: Icon(_isTtsEnabled ? Icons.volume_up : Icons.volume_off),
+              onPressed: () {
+                setState(() => _isTtsEnabled = !_isTtsEnabled);
+                if (!_isTtsEnabled) {
+                  _flutterTts.stop();
+                }
+              },
+              tooltip: _isTtsEnabled ? 'Mute' : 'Unmute',
+            ),
             IconButton(
               icon: const Icon(Icons.refresh),
               onPressed: () {
