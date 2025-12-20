@@ -166,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       hintColor: subtitleColor,
                                       borderColor: borderColor,
                                       primaryColor: primaryColor,
+                                      maxLength: 10,
                                     ),
                                   ),
                                 ],
@@ -315,6 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
     TextInputType? keyboardType,
     bool isPassword = false,
     IconData? icon,
+    int? maxLength,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -326,11 +328,13 @@ class _LoginScreenState extends State<LoginScreen> {
         controller: controller,
         obscureText: isPassword && _obscurePassword,
         keyboardType: keyboardType,
+        maxLength: maxLength,
         style: GoogleFonts.lexend(color: textColor),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.lexend(color: hintColor),
           prefixIcon: icon != null ? Icon(icon, color: primaryColor, size: 20) : null,
+          counterText: '', // Hide counter
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(

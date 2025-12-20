@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/translation_service.dart';
 import '../home/home_screen.dart';
+import '../home/main_screen.dart';
 import '../guide/crop_guide_screen.dart';
 import '../profile/profile_screen.dart';
 import '../advisory/advisory_screen.dart';
@@ -53,7 +54,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with SingleTicker
               child: Row(
                 children: [
                    GestureDetector(
-                    onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen())),
+                    onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen())),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -109,7 +110,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with SingleTicker
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: TabBar(
@@ -120,7 +121,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with SingleTicker
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.black,
-                unselectedLabelColor: Colors.white60,
+                unselectedLabelColor: isDark ? Colors.white60 : Colors.grey.shade700,
                 labelStyle: GoogleFonts.lexend(fontWeight: FontWeight.bold),
                 tabs: [
                   Tab(text: TranslationService.tr('shop')),
@@ -414,34 +415,29 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with SingleTicker
             ),
           ),
           // Info
-          Expanded(
+          Flexible(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(tag, style: GoogleFonts.lexend(fontSize: 10, fontWeight: FontWeight.bold, color: tagColor)),
-                      const SizedBox(height: 4),
-                      Text(title, style: GoogleFonts.lexend(fontSize: 14, fontWeight: FontWeight.bold, color: textColor), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    ],
-                   ),
+                  Text(tag, style: GoogleFonts.lexend(fontSize: 9, fontWeight: FontWeight.bold, color: tagColor)),
+                  Text(title, style: GoogleFonts.lexend(fontSize: 12, fontWeight: FontWeight.bold, color: textColor), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 2),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(price, style: GoogleFonts.lexend(fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
+                      Flexible(child: Text(price, style: GoogleFonts.lexend(fontSize: 12, fontWeight: FontWeight.bold, color: textColor), overflow: TextOverflow.ellipsis)),
                       Container(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(3),
                         decoration: const BoxDecoration(
                             color: Color(0xFF13EC6A),
                             shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
                         ),
-                        child: Icon(Icons.add, color: Colors.black87, size: 20),
+                        child: Icon(Icons.add, color: Colors.black87, size: 16),
                       ),
                     ],
                   )

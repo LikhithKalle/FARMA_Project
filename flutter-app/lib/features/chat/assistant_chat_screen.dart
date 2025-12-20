@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' as Math;
+import 'package:flutter_tts/flutter_tts.dart';
 import '../../services/api_service.dart';
 import '../../services/translation_service.dart';
 import '../recommendations/recommendation_result_screen.dart';
@@ -27,11 +28,13 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
 
   final TextEditingController _msgController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FlutterTts _flutterTts = FlutterTts();
   
   // Dynamic Chat State
-  final List<Map<String, dynamic>> _messages = []; // {text, isUser}
+  final List<Map<String, dynamic>> _messages = []; // {text, isUser, isAnimating}
   String? _sessionId;
   bool _isLoading = false;
+  int? _animatingMessageIndex; // Track which message is currently animating
   
   // Interaction State
   List<String>? _currentOptions;
@@ -40,8 +43,37 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
   @override
   void initState() {
     super.initState();
+    _initTts();
     // Start conversation automatically
     _sendMessage("Hi", silent: true); 
+  }
+
+  Future<void> _initTts() async {
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setSpeechRate(0.5);
+    await _flutterTts.setPitch(1.0);
+    _updateTtsLanguage();
+  }
+
+  void _updateTtsLanguage() {
+    final langCode = TranslationService.locale.value.languageCode;
+    String ttsLang = 'en-US';
+    if (langCode == 'hi') ttsLang = 'hi-IN';
+    else if (langCode == 'te') ttsLang = 'te-IN';
+    _flutterTts.setLanguage(ttsLang);
+  }
+
+  Future<void> _speakText(String text) async {
+    _updateTtsLanguage();
+    await _flutterTts.speak(text);
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    _msgController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> _sendMessage(String text, {bool silent = false}) async {
@@ -81,7 +113,8 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
         
         if (mounted) {
           setState(() {
-             _messages.add({"text": botText, "isUser": false});
+             _messages.add({"text": botText, "isUser": false, "isAnimating": true});
+             _animatingMessageIndex = _messages.length - 1;
              _currentOptions = newOptions;
              _inputType = newInputType;
              _isLoading = false;
@@ -90,6 +123,8 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
              }
           });
           _scrollToBottom();
+          // Trigger TTS for bot message
+          _speakText(botText);
   
           // If recommendations exist, show them or navigate
           if (recs != null && recs.isNotEmpty) {
@@ -224,14 +259,25 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
                 final msg = _messages[index];
                 final isUser = msg['isUser'] as bool;
                 final text = msg['text'] as String;
+                final isAnimating = msg['isAnimating'] == true && _animatingMessageIndex == index;
+                final isLastBotMessage = !isUser && index == _messages.length - 1 && !_isLoading;
 
-                return _buildMessageBubble(text, isUser, isDark);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildMessageBubble(text, isUser, isDark, isAnimating: isAnimating, messageIndex: index),
+                    // Show options right after the last bot message
+                    if (isLastBotMessage && _currentOptions != null && _currentOptions!.isNotEmpty)
+                      _buildInlineOptions(isDark),
+                  ],
+                );
               },
             ),
           ),
 
-          // Options / Input Area
-          _buildInputArea(isDark, textColor),
+          // Input Area (only show if no inline options)
+          if (_currentOptions == null || _currentOptions!.isEmpty)
+            _buildInputArea(isDark, textColor),
         ],
       ),
     );
@@ -351,7 +397,61 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
       return const SizedBox.shrink();
   }
 
-  Widget _buildMessageBubble(String text, bool isUser, bool isDark) {
+  // Options displayed inline right below the bot message
+  Widget _buildInlineOptions(bool isDark) {
+    if (_currentOptions == null || _currentOptions!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(left: 40, top: 8, bottom: 8),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: _currentOptions!.asMap().entries.map((entry) {
+          final int idx = entry.key;
+          final String option = entry.value;
+          final bool isLocation = (_inputType == "location" && idx == 0) || option == "Use Current Location";
+          
+          return ActionChip(
+            label: Text(
+              option,
+              style: GoogleFonts.lexend(
+                color: isLocation ? backgroundDark : primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+            backgroundColor: isLocation ? primaryColor : (isDark ? surfaceHighlight : Colors.grey[100]),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            avatar: isLocation ? const Icon(Icons.my_location, size: 16, color: backgroundDark) : null,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            onPressed: () {
+              if (isLocation) {
+                _handleLocation();
+              } else {
+                _sendMessage(option);
+              }
+            },
+          );
+        }).toList().cast<Widget>(),
+      ),
+    );
+  }
+
+  void _onAnimationComplete(int messageIndex) {
+    if (mounted) {
+      setState(() {
+        if (_animatingMessageIndex == messageIndex) {
+          _messages[messageIndex]['isAnimating'] = false;
+          _animatingMessageIndex = null;
+        }
+      });
+    }
+  }
+
+  Widget _buildMessageBubble(String text, bool isUser, bool isDark, {bool isAnimating = false, int? messageIndex}) {
+    final textColor = isUser ? backgroundDark : (isDark ? Colors.white : textDark);
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: Row(
@@ -384,14 +484,20 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
                        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2))
                     ]
                 ),
-                child: Text(
-                    text,
-                    style: GoogleFonts.lexend(
-                        color: isUser ? backgroundDark : (isDark ? Colors.white : textDark),
-                        fontSize: 15,
-                        height: 1.4
-                    )
-                ),
+                child: isUser || !isAnimating
+                  ? Text(
+                      text,
+                      style: GoogleFonts.lexend(
+                          color: textColor,
+                          fontSize: 15,
+                          height: 1.4
+                      )
+                  )
+                  : AnimatedTypingText(
+                      text: text,
+                      textColor: textColor,
+                      onComplete: () => _onAnimationComplete(messageIndex ?? 0),
+                    ),
             ),
           ),
           
@@ -469,3 +575,70 @@ class DelayTween extends Tween<double> {
   }
 }
 
+// Animated typing text widget - shows words one by one
+class AnimatedTypingText extends StatefulWidget {
+  final String text;
+  final Color textColor;
+  final VoidCallback? onComplete;
+  final Duration wordDelay;
+
+  const AnimatedTypingText({
+    super.key,
+    required this.text,
+    required this.textColor,
+    this.onComplete,
+    this.wordDelay = const Duration(milliseconds: 80),
+  });
+
+  @override
+  State<AnimatedTypingText> createState() => _AnimatedTypingTextState();
+}
+
+class _AnimatedTypingTextState extends State<AnimatedTypingText> {
+  String _displayedText = '';
+  List<String> _words = [];
+  int _currentWordIndex = 0;
+  bool _isComplete = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _words = widget.text.split(' ');
+    _animateNextWord();
+  }
+
+  void _animateNextWord() {
+    if (!mounted) return;
+    
+    if (_currentWordIndex < _words.length) {
+      setState(() {
+        if (_displayedText.isEmpty) {
+          _displayedText = _words[_currentWordIndex];
+        } else {
+          _displayedText = '$_displayedText ${_words[_currentWordIndex]}';
+        }
+        _currentWordIndex++;
+      });
+      
+      Future.delayed(widget.wordDelay, _animateNextWord);
+    } else {
+      // Animation complete
+      if (!_isComplete) {
+        _isComplete = true;
+        widget.onComplete?.call();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      _displayedText,
+      style: GoogleFonts.lexend(
+        color: widget.textColor,
+        fontSize: 15,
+        height: 1.4,
+      ),
+    );
+  }
+}

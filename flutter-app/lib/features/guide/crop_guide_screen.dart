@@ -61,16 +61,16 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                         style: GoogleFonts.lexend(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: textColor,
                         ),
                       ),
                       Container(
                         width: 40, height: 40,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: isDark ? Colors.white.withOpacity(0.1) : Colors.grey.shade200,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.notifications, color: Colors.white, size: 24),
+                        child: Icon(Icons.notifications, color: textColor, size: 24),
                       ),
                     ],
                   ),
@@ -85,9 +85,9 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                       Container(
                         height: 56,
                         decoration: BoxDecoration(
-                          color: surfaceDark,
+                          color: surfaceColor,
                           borderRadius: BorderRadius.circular(28),
-                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300),
                         ),
                         child: Row(
                           children: [
@@ -96,7 +96,7 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: TextField(
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: textColor),
                                 decoration: InputDecoration(
                                   hintText: TranslationService.tr('search_crops'),
                                   hintStyle: const TextStyle(color: Colors.grey),
@@ -107,7 +107,7 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                             Container(
                               width: 48, height: 48,
                               margin: const EdgeInsets.only(right: 4),
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: primaryColor,
                                 shape: BoxShape.circle,
                               ),
@@ -130,13 +130,13 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.tips_and_updates, color: primaryColor, size: 20),
+                            Icon(Icons.tips_and_updates, color: primaryColor, size: 20),
                             const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   TranslationService.tr('crop_tip'),
                                   style: TextStyle(
-                                    color: Colors.grey[300],
+                                    color: isDark ? Colors.grey[300] : Colors.grey[700],
                                     fontSize: 14,
                                     height: 1.5,
                                   ),
@@ -160,22 +160,22 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
                                 margin: const EdgeInsets.only(right: 8),
                                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: isSelected ? primaryColor : surfaceDark,
+                                  color: isSelected ? primaryColor : surfaceColor,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: isSelected ? primaryColor : Colors.white.withOpacity(0.05)),
+                                  border: Border.all(color: isSelected ? primaryColor : (isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300)),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       filters[index]['icon'] as IconData,
                                       size: 18,
-                                      color: isSelected ? Colors.black : Colors.grey[300],
+                                      color: isSelected ? Colors.black : (isDark ? Colors.grey[300] : Colors.grey[700]),
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
                                       filters[index]['label'] as String,
                                       style: GoogleFonts.lexend(
-                                        color: isSelected ? Colors.black : Colors.grey[300],
+                                        color: isSelected ? Colors.black : (isDark ? Colors.grey[300] : Colors.grey[700]),
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),
@@ -292,11 +292,13 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
     Color badgeTextColor = const Color(0xFF13EC6A), // Default text color
     required List<Map<String, dynamic>> tags,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: surfaceDark,
+        color: isDark ? surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade300),
+        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, 2))],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -330,46 +332,50 @@ class _CropGuideScreenState extends State<CropGuideScreen> {
               ],
             ),
           ),
-          Expanded(
+          Flexible(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(8),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        name,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : const Color(0xFF102217),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+                      const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
                     ],
                   ),
+                  const SizedBox(height: 4),
                   Wrap(
                     spacing: 4,
-                    runSpacing: 4,
+                    runSpacing: 2,
                     children: tags.map((tag) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Theme.of(context).brightness == Brightness.dark ? Colors.white.withOpacity(0.05) : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(tag['icon'] as IconData, size: 12, color: tag['color'] as Color? ?? Colors.grey),
-                            const SizedBox(width: 4),
+                            Icon(tag['icon'] as IconData, size: 10, color: tag['color'] as Color? ?? Colors.grey),
+                            const SizedBox(width: 2),
                             Text(
                               tag['label'] as String,
-                              style: const TextStyle(color: Colors.grey, fontSize: 10),
+                              style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.grey : Colors.grey.shade700, fontSize: 9),
                             ),
                           ],
                         ),

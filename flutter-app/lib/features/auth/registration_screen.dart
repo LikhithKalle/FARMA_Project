@@ -212,7 +212,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                           isExpanded: true,
                                           dropdownColor: cardColor,
                                           style: GoogleFonts.lexend(fontSize: 14, color: textColor),
-                                          items: ['+91', '+1', '+44'].map((String value) {
+                                          items: ['+91'].map((String value) {
                                             return DropdownMenuItem<String>(
                                               value: value,
                                               child: Row(
@@ -232,7 +232,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     Expanded(
                                       child: _buildTextField(
                                         controller: _phoneController,
-                                        hint: '98765 43210',
+                                        hint: '90000 00000',
                                         keyboardType: TextInputType.phone,
                                         isDark: isDark,
                                         backgroundColor: bgColor,
@@ -240,6 +240,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         hintColor: isDark ? Colors.white30 : Colors.grey,
                                         borderColor: borderColor,
                                         primaryColor: primaryColor,
+                                        maxLength: 10,
                                       ),
                                     ),
                                   ],
@@ -450,6 +451,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     required Color borderColor,
     required Color primaryColor,
     bool isPassword = false,
+    int? maxLength,
   }) {
     bool obscureText = isPassword; 
     
@@ -467,7 +469,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             obscureText: obscureText,
             style: GoogleFonts.lexend(fontSize: 16, color: textColor),
             keyboardType: keyboardType,
+            maxLength: maxLength,
             decoration: InputDecoration(
+              counterText: '',
               hintText: hint,
               hintStyle: GoogleFonts.lexend(color: hintColor),
               border: InputBorder.none,
