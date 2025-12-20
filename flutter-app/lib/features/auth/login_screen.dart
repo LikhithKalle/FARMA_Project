@@ -174,11 +174,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               
                               const SizedBox(height: 20),
                               
-                              _buildLabel(TranslationService.tr('password'), textColor),
+                              _buildLabel('Enter 4-digit PIN', textColor),
                               _buildTextField(
                                 controller: _passwordController,
-                                hint: TranslationService.tr('password'),
+                                hint: 'Enter PIN',
                                 isPassword: true,
+                                // Enable numeric keyboard for PIN
+                                keyboardType: TextInputType.number,
+                                maxLength: 4,
                                 icon: Icons.lock_outline,
                                 backgroundColor: backgroundColor,
                                 textColor: textColor,
@@ -353,27 +356,54 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handleLogin() async {
+    // Validate Phone
+    if (_phoneController.text.isEmpty || _phoneController.text.length != 10) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid 10-digit mobile number')),
+      );
+      return;
+    }
+
+    // Validate PIN
+    if (_passwordController.text.isEmpty || _passwordController.text.length != 4) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid 4-digit PIN')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     
-    // Simulate login based on input (since we are mocking auth for now or using simple auth service)
-    // For now, accept any non-empty credentials or specific test ones from AuthService logic
-    
-    await Future.delayed(const Duration(seconds: 1)); // Mock delay
-    
-    if (!mounted) return;
-    
-    if (_phoneController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const MainScreen()),
-        (route) => false,
+    // Call REAL Auth Service
+    try {
+      final result = await _authService.login('+91${_phoneController.text}', _passwordController.text);
+      
+      if (!mounted) return;
+      
+      if (result['success'] == true) {
+        // Success!
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+          (route) => false,
+        );
+      } else {
+        // Failure from Backend
+        String errorMsg = result['error'] ?? 'Login failed. Please check credentials.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(TranslationService.tr(errorMsg) != errorMsg ? TranslationService.tr(errorMsg) : errorMsg), 
+            backgroundColor: Colors.red
+          ),
+        );
+      }
+    } catch (e) {
+       if (!mounted) return;
+       ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login Error: $e'), backgroundColor: Colors.red),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter valid details')),
-      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
-    
-    setState(() => _isLoading = false);
   }
 }

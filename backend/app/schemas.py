@@ -13,6 +13,7 @@ class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     phone: str = Field(index=True, unique=True)
     full_name: Optional[str] = None
+    password_hash: Optional[str] = None  # Hashed password
     language: str = "en"
     created_at: Optional[str] = None
 
@@ -20,7 +21,12 @@ class User(SQLModel, table=True):
 class UserCreate(PydanticBaseModel):
     phone: str
     full_name: str
+    password: str  # Plain password, will be hashed
     language: str = "en"
+
+class LoginRequest(PydanticBaseModel):
+    phone: str
+    password: str
 
 class OTPRequest(PydanticBaseModel):
     phone: str

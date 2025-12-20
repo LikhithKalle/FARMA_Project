@@ -247,14 +247,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 const SizedBox(height: 20),
                                 
-                                // Password fields
-                                _buildLabel(TranslationService.tr('password'), textColor),
+                                // PIN fields
+                                _buildLabel('Create 4-digit PIN', textColor),
                                 _buildTextField(
                                   controller: _passwordController,
-                                  hint: TranslationService.tr('password'),
+                                  hint: 'Enter 4-digit PIN',
                                   icon: Icons.lock_outline,
                                   isDark: isDark,
                                   isPassword: true,
+                                  // Enable numeric keyboard for PIN
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 4, 
                                   backgroundColor: bgColor,
                                   textColor: textColor,
                                   hintColor: isDark ? Colors.white30 : Colors.grey,
@@ -263,13 +266,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 ),
                                 const SizedBox(height: 20),
 
-                                _buildLabel(TranslationService.tr('confirm_password'), textColor),
+                                _buildLabel('Confirm 4-digit PIN', textColor),
                                 _buildTextField(
                                   controller: _confirmPasswordController,
-                                  hint: TranslationService.tr('confirm_password'),
+                                  hint: 'Re-enter 4-digit PIN',
                                   icon: Icons.lock_outline,
                                   isDark: isDark,
                                   isPassword: true,
+                                  // Enable numeric keyboard for PIN
+                                  keyboardType: TextInputType.number,
+                                  maxLength: 4,
                                   backgroundColor: bgColor,
                                   textColor: textColor,
                                   hintColor: isDark ? Colors.white30 : Colors.grey,
@@ -288,6 +294,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                     
                                     if (name.isEmpty || _phoneController.text.isEmpty || _passwordController.text.isEmpty) {
                                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(TranslationService.tr('fill_all_fields'))));
+                                      return;
+                                    }
+
+                                    // Validate phone number is exactly 10 digits
+                                    if (_phoneController.text.length != 10) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Phone number must be exactly 10 digits')));
+                                      return;
+                                    }
+
+                                    // Validate PIN is exactly 4 digits
+                                    if (_passwordController.text.length != 4) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PIN must be exactly 4 digits')));
                                       return;
                                     }
 
