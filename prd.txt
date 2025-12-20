@@ -1,0 +1,182 @@
+📄 PRODUCT REQUIREMENTS DOCUMENT (PRD)
+Product Name
+FARMA
+Farmer’s Agriculture Recommendation & Monitoring Assistant
+________________________________________
+1. Product Overview
+1.1 Product Description
+FARMA is a multilingual, voice-enabled Android mobile application (APK) designed to help farmers make confident, explainable, and risk-aware farming decisions before planting.
+The application acts as a conversational farming assistant that collects farmer inputs, analyzes Indian agricultural datasets, and provides clear crop recommendations, risk awareness, and planning guidance in the farmer’s preferred language — both as text and audio.
+________________________________________
+2. Problem Statement
+Farmers often face crop losses due to:
+•	Wrong crop selection for their soil and season
+•	Unpredictable climate conditions
+•	Lack of timely and localized agricultural guidance
+•	Limited access to expert advice in rural areas
+Most existing solutions are:
+•	Too complex
+•	Not region-specific
+•	Not language-friendly
+•	Not usable for small and medium-scale farmers
+________________________________________
+3. Solution Statement
+FARMA addresses these challenges by providing a simple, explainable, and decision-focused farming assistant that:
+•	Understands the farmer’s land, soil, season, and region
+•	Uses real Indian agricultural data
+•	Explains why a crop is suitable
+•	Highlights risks and alternatives
+•	Communicates in the farmer’s own language and voice
+________________________________________
+4. Target Users
+4.1 Primary Users
+•	Small and medium-scale farmers
+•	Rural and semi-rural farmers with Android smartphones
+4.2 Secondary Users
+•	Agricultural students
+•	Local agricultural officers
+•	NGOs supporting farmers
+________________________________________
+5. Product Goals & Objectives
+5.1 Core Goals
+•	Reduce crop mismatch and farming risk
+•	Improve farmer decision confidence
+•	Provide accessible, language-friendly guidance
+•	Support sustainable farming practices
+5.2 Design Principles
+•	Farmer-first UX
+•	Explainability over complexity
+•	Decision support, not blind automation
+•	Low-network friendly
+________________________________________
+6. Platform & Scope
+•	Platform: Android Mobile Application (APK)
+•	Connectivity: Works in low-internet environments (hybrid mode)
+•	Language Support: English, Telugu, Hindi
+•	Interaction Style: Conversational (chat-based) with voice output
+________________________________________
+7. Core Features (Hackathon Scope – IMPLEMENTED / PROTOTYPED)
+7.1 Conversational Assistant
+•	Chat-style interface
+•	Step-by-step guided input collection
+•	Simple, farmer-friendly language
+________________________________________
+7.2 Multilingual Support
+•	Language selection at app start
+•	Consistent experience across languages
+________________________________________
+7.3 Voice Output (Text-to-Speech)
+•	Reads recommendations aloud
+•	Supports farmers with limited literacy
+•	Replay option available
+________________________________________
+7.4 Context-Aware Input Collection
+FARMA collects:
+•	📍 Location (district/state, GPS or manual)
+•	🌱 Soil type (manual or inferred)
+•	📅 Season or month
+•	📏 Land area (acres/hectares)
+•	💧 Irrigation availability
+These inputs are used to build a farmer context profile.
+________________________________________
+7.5 Crop Recommendation Engine (AI-Assisted)
+•	Uses Indian agricultural datasets
+•	Ranks top 2–3 suitable crops
+•	Considers:
+o	Soil compatibility
+o	Season suitability
+o	Regional performance
+o	Land size impact
+________________________________________
+7.6 Explainable Recommendations
+For each crop:
+•	Why it is suitable
+•	Expected yield range (approximate, land-based)
+•	Water requirement level
+•	Risk level (Low / Medium)
+________________________________________
+7.7 Risk Awareness Module (Differentiator)
+•	Provides early risk indicators before planting
+•	Based on:
+o	Soil compatibility
+o	Seasonal stability
+o	Climate patterns
+Purpose:
+Help farmers avoid high-risk decisions before investing.
+________________________________________
+7.8 What-If Decision Support (Differentiator)
+•	Farmer can compare alternative crops under the same context
+•	Displays:
+o	Suitability
+o	Water needs
+o	Risk differences
+This is decision support, not full simulation.
+________________________________________
+7.9 Fertilizer Guidance (High-Level Advisory)
+•	Provides basic fertilizer type guidance (e.g., NPK / organic)
+•	Based on crop and soil type
+•	Avoids dosage-level precision claims
+Purpose:
+Reduce misuse and promote awareness.
+________________________________________
+8. Data & Machine Learning Strategy
+8.1 Datasets Used
+•	Crop & Soil Dataset (Kaggle)
+•	Indian Agricultural Crop Production Dataset (Kaggle)
+________________________________________
+8.2 ML & Intelligence Approach
+•	Lightweight classical ML models:
+o	Crop suitability classification
+o	Yield estimation regression
+•	Combined with:
+o	Rule-based agricultural logic
+o	Explainability templates
+Models are:
+•	Trained offline using Google Colab
+•	Integrated as pretrained intelligence or lookup tables
+________________________________________
+9. System Architecture (High-Level)
+9.1 Frontend (Android APK)
+•	Flutter / React Native
+•	Chat-based UI
+•	Voice playback
+•	Language management
+________________________________________
+9.2 Assistant Orchestration Layer
+•	Manages conversation flow
+•	Validates inputs
+•	Builds farmer context
+________________________________________
+9.3 Decision & Explainability Engine
+•	Generates crop rankings
+•	Computes risk indicators
+•	Converts outputs into simple explanations
+________________________________________
+9.4 Data & Model Layer
+•	Agricultural datasets
+•	Pretrained ML models / precomputed tables
+________________________________________
+10. Non-Functional Requirements
+•	Simple and intuitive UI
+•	Fast response time
+•	Low data usage
+•	Scalable architecture
+•	Basic data security
+________________________________________
+11. Future Enhancements (OUT OF SCOPE – Vision)
+•	Full speech-to-text conversation
+•	Image-based disease detection
+•	Satellite imagery (NDVI, moisture)
+•	Market price & profit forecasting
+•	Government scheme recommendations
+•	Fully offline on-device ML
+________________________________________
+12. Success Metrics
+•	Farmer clarity and confidence
+•	Accuracy of recommendations (qualitative)
+•	Risk awareness usefulness
+•	Smooth demo and judge understanding
+________________________________________
+13. One-Line Product Summary
+FARMA is a voice-enabled, risk-aware farming assistant that helps farmers choose the right crop and plan confidently using AI and Indian agricultural data.
+

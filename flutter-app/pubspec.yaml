@@ -1,0 +1,35 @@
+name: FARMA
+description: "A new Flutter project for FARMA."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  flutter_tts: ^4.0.2 # Added for Text-to-Speech
+  http: ^1.1.0
+  geolocator: ^12.0.0
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon/logo.png
+    - assets/icon/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/logo.png"

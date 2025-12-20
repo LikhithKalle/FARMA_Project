@@ -1,0 +1,25 @@
+# Secrets
+.env
+backend/.env
+flutter-app/.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.pytest_cache/
+
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+android/local.properties
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+
+# Misc
+.DS_Store
+.idea/
+.vscode/

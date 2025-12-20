@@ -1,0 +1,11 @@
+Soil Type,Crop Type
+black,"['cotton' 'oil seeds' 'sugarcane' 'millets' 'wheat' 'maize' 'paddy'
+ 'pulses' 'tobacco' 'ground nuts' 'barley']"
+clayey,"['paddy' 'pulses' 'millets' 'cotton' 'oil seeds' 'sugarcane' 'wheat'
+ 'ground nuts' 'barley' 'maize' 'tobacco']"
+loamy,"['sugarcane' 'wheat' 'cotton' 'paddy' 'barley' 'tobacco' 'pulses' 'maize'
+ 'ground nuts' 'oil seeds' 'millets']"
+red,"['tobacco' 'cotton' 'ground nuts' 'millets' 'sugarcane' 'paddy' 'wheat'
+ 'maize' 'barley' 'oil seeds' 'pulses']"
+sandy,"['maize' 'barley' 'millets' 'oil seeds' 'ground nuts' 'tobacco' 'cotton'
+ 'pulses' 'sugarcane' 'wheat' 'paddy']"

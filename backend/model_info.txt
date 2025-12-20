@@ -1,0 +1,17 @@
+Trying pickle...
+Pickle failed: STACK_GLOBAL requires str
+Trying joblib...
+
+Inspecting Model: <class 'sklearn.tree._classes.DecisionTreeClassifier'>
+Feature Names: ['soil_enc']
+
+--- Encoders ---
+
+Inspecting crop_encoder.pkl: <class 'sklearn.preprocessing._label.LabelEncoder'>
+Classes: ['barley', 'cotton', 'ground nuts', 'maize', 'millets', 'oil seeds', 'paddy', 'pulses', 'sugarcane', 'tobacco', 'wheat']
+
+Inspecting soil_encoder.pkl: <class 'sklearn.preprocessing._label.LabelEncoder'>
+Classes: ['black', 'clayey', 'loamy', 'red', 'sandy']
+
+Inspecting state_encoder.pkl: <class 'sklearn.preprocessing._label.LabelEncoder'>
+Classes: ['Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli', 'Daman and Diu', 'Delhi', 'Goa', 'Gujarat']
