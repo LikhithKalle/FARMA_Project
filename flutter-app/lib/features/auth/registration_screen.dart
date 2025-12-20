@@ -179,16 +179,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildLabel(TranslationService.tr('full_name'), isDark),
+                                _buildLabel(TranslationService.tr('full_name'), textColor),
                                 _buildTextField(
                                   controller: _nameController,
                                   hint: TranslationService.tr('enter_name'),
                                   icon: Icons.person_outline,
                                   isDark: isDark,
+                                  backgroundColor: bgColor,
+                                  textColor: textColor,
+                                  hintColor: isDark ? Colors.white30 : Colors.grey,
+                                  borderColor: borderColor,
+                                  primaryColor: primaryColor,
                                 ),
                                 const SizedBox(height: 20),
                                 
-                                _buildLabel(TranslationService.tr('mobile_number'), isDark),
+                                _buildLabel(TranslationService.tr('mobile_number'), textColor),
                                 Row(
                                   children: [
                                     Container(
@@ -196,17 +201,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                       margin: const EdgeInsets.only(right: 8),
                                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4), // Reduced padding
                                       decoration: BoxDecoration(
-                                        color: backgroundDark,
+                                        color: bgColor,
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(color: borderColor),
                                       ),
                                       child: DropdownButtonHideUnderline(
                                         child: DropdownButton<String>(
                                           value: '+91',
-                                          icon: const Icon(Icons.keyboard_arrow_down, size: 20), // Smaller icon
+                                          icon: Icon(Icons.keyboard_arrow_down, size: 20, color: textColor),
                                           isExpanded: true,
-                                          dropdownColor: backgroundDark,
-                                          style: GoogleFonts.lexend(fontSize: 14, color: Colors.white), // Smaller text
+                                          dropdownColor: cardColor,
+                                          style: GoogleFonts.lexend(fontSize: 14, color: textColor),
                                           items: ['+91', '+1', '+44'].map((String value) {
                                             return DropdownMenuItem<String>(
                                               value: value,
@@ -215,7 +220,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                                 children: [
                                                   const Text('🇮🇳', style: TextStyle(fontSize: 18)),
                                                   const SizedBox(width: 4),
-                                                  Text(value, style: GoogleFonts.lexend(fontSize: 14, color: Colors.white)),
+                                                  Text(value, style: GoogleFonts.lexend(fontSize: 14, color: textColor)),
                                                 ],
                                               ),
                                             );
@@ -229,7 +234,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                         controller: _phoneController,
                                         hint: '98765 43210',
                                         keyboardType: TextInputType.phone,
-                                        isDark: true,
+                                        isDark: isDark,
+                                        backgroundColor: bgColor,
+                                        textColor: textColor,
+                                        hintColor: isDark ? Colors.white30 : Colors.grey,
+                                        borderColor: borderColor,
+                                        primaryColor: primaryColor,
                                       ),
                                     ),
                                   ],
@@ -237,23 +247,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 const SizedBox(height: 20),
                                 
                                 // Password fields
-                                _buildLabel(TranslationService.tr('password'), isDark),
+                                _buildLabel(TranslationService.tr('password'), textColor),
                                 _buildTextField(
                                   controller: _passwordController,
                                   hint: TranslationService.tr('password'),
                                   icon: Icons.lock_outline,
                                   isDark: isDark,
                                   isPassword: true,
+                                  backgroundColor: bgColor,
+                                  textColor: textColor,
+                                  hintColor: isDark ? Colors.white30 : Colors.grey,
+                                  borderColor: borderColor,
+                                  primaryColor: primaryColor,
                                 ),
                                 const SizedBox(height: 20),
 
-                                _buildLabel(TranslationService.tr('confirm_password'), isDark),
+                                _buildLabel(TranslationService.tr('confirm_password'), textColor),
                                 _buildTextField(
                                   controller: _confirmPasswordController,
                                   hint: TranslationService.tr('confirm_password'),
                                   icon: Icons.lock_outline,
                                   isDark: isDark,
                                   isPassword: true,
+                                  backgroundColor: bgColor,
+                                  textColor: textColor,
+                                  hintColor: isDark ? Colors.white30 : Colors.grey,
+                                  borderColor: borderColor,
+                                  primaryColor: primaryColor,
                                 ),
 
                                 
