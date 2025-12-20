@@ -11,12 +11,14 @@ TRANSLATIONS = {
         'intro': "Hello! I am your farming assistant. Let's find the best crops for you. First, where is your farm located?",
         'found_loc': "I've detected your location as {address}. Is this correct?",
         'loc_fail': "Could not detect location details. Please type your location manually.",
-        'loc_error': "Error processing location. Please type manually.",
-        'manual_loc_prompt': "Please allow location access on your device or type manually.",
+        'loc_error': "Error processing location. Please search manually.",
+        'manual_loc_prompt': "Please allow location access on your device or search manually.",
         'manual_verify': "Found {place}. Is this correct?",
         'manual_fail': "I couldn't verify '{input}' on the map, but I'll note it down. Now, what type of soil do you have?",
         'ask_soil': "Great. Now, what type of soil do you have?",
-        'ask_manual_dist': "Please type your district/city name manually.",
+        'ask_manual_dist': "Please select your state and district.",
+        'ask_state': "Please select your state:",
+        'ask_district': "Please select your district:",
         'ask_soil_manual': "Please type your soil type.",
         'ask_season': "Which farming season is this for?",
         'ask_area': "What is the total land area (in acres)?",
@@ -30,11 +32,11 @@ TRANSLATIONS = {
         'reset_prompt': "Type 'reset' to start over.",
         'options': {
             'Use Current Location': 'Use Current Location',
-            'Type Manually': 'Type Manually',
+            'Search Manually': 'Search Manually',
             'Yes': 'Yes', 
             'No': 'No',
-            'No, Type Manually': 'No, Type Manually',
-            'Red': 'Red', 'Black': 'Black', 'Sandy': 'Sandy', 'Loam': 'Loam', 'Clay': 'Clay', 'Other': 'Other',
+            'No, Search Manually': 'No, Search Manually',
+            'Red': 'Red', 'Black': 'Black', 'Sandy': 'Sandy', 'Loam': 'Loam', 'Clay': 'Clay',
             'Kharif': 'Kharif', 'Rabi': 'Rabi', 'Zaid': 'Zaid'
         }
     },
@@ -61,11 +63,11 @@ TRANSLATIONS = {
         'reset_prompt': "पुनः आरंभ करने के लिए 'reset' टाइप करें।",
         'options': {
             'Use Current Location': 'वर्तमान स्थान का उपयोग करें',
-            'Type Manually': 'मैन्युअल रूप से लिखें',
+            'Search Manually': 'खोज करें',
             'Yes': 'हाँ', 
             'No': 'नहीं',
-            'No, Type Manually': 'नहीं, मैन्युअल रूप से लिखें',
-            'Red': 'लाल', 'Black': 'काली', 'Sandy': 'रेतीली', 'Loam': 'दोमट', 'Clay': 'चिकनी', 'Other': 'अन्य',
+            'No, Search Manually': 'नहीं, खोज करें',
+            'Red': 'लाल', 'Black': 'काली', 'Sandy': 'रेतीली', 'Loam': 'दोमट', 'Clay': 'चिकनी',
             'Kharif': 'खरीफ', 'Rabi': 'रबी', 'Zaid': 'जायद'
         }
     },
@@ -92,14 +94,33 @@ TRANSLATIONS = {
         'reset_prompt': "మళ్లీ ప్రారంభించడానికి 'reset' అని టైప్ చేయండి.",
         'options': {
             'Use Current Location': 'ప్రస్తుత స్థానాన్ని ఉపయోగించండి',
-            'Type Manually': 'మాన్యువల్‌గా టైప్ చేయండి',
+            'Search Manually': 'మాన్యువల్‌గా శోధించండి',
             'Yes': 'అవును', 
             'No': 'కాదు',
-            'No, Type Manually': 'కాదు, మాన్యువల్‌గా టైప్ చేయండి',
-            'Red': 'ఎరుపు', 'Black': 'నల్ల', 'Sandy': 'ఇసుక', 'Loam': 'లోమ్', 'Clay': 'బంకమట్టి', 'Other': 'ఇతర',
+            'No, Search Manually': 'కాదు, మాన్యువల్‌గా శోధించండి',
+            'Red': 'ఎరుపు', 'Black': 'నల్ల', 'Sandy': 'ఇసుక', 'Loam': 'లోమ్', 'Clay': 'బంకమట్టి',
             'Kharif': 'ఖరీఫ్', 'Rabi': 'రబీ', 'Zaid': 'జైద్'
         }
     }
+}
+
+# Indian States and their Districts for location selection
+INDIA_STATES_DISTRICTS = {
+    "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", "West Godavari", "YSR Kadapa"],
+    "Telangana": ["Adilabad", "Hyderabad", "Karimnagar", "Khammam", "Mahabubnagar", "Medak", "Nalgonda", "Nizamabad", "Rangareddy", "Warangal"],
+    "Karnataka": ["Bangalore Rural", "Bangalore Urban", "Belgaum", "Bellary", "Bidar", "Bijapur", "Chamarajanagar", "Chikballapur", "Chikmagalur", "Chitradurga", "Dakshina Kannada", "Davangere", "Dharwad", "Gadag", "Gulbarga", "Hassan", "Haveri", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysore", "Raichur", "Ramanagara", "Shimoga", "Tumkur", "Udupi", "Uttara Kannada"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Salem", "Sivaganga", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", "Tirupur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+    "Kerala": ["Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", "Thiruvananthapuram", "Thrissur", "Wayanad"],
+    "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+    "Gujarat": ["Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", "Bhavnagar", "Botad", "Chhota Udaipur", "Dahod", "Dang", "Devbhoomi Dwarka", "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", "Tapi", "Vadodara", "Valsad"],
+    "Rajasthan": ["Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", "Sri Ganganagar", "Tonk", "Udaipur"],
+    "Madhya Pradesh": ["Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", "Harda", "Hoshangabad", "Indore", "Jabalpur", "Jhabua", "Katni", "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", "Neemuch", "Panna", "Raisen", "Rajgarh", "Ratlam", "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", "Umaria", "Vidisha"],
+    "Uttar Pradesh": ["Agra", "Aligarh", "Allahabad", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", "Banda", "Barabanki", "Bareilly", "Basti", "Bhadohi", "Bijnor", "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", "Etawah", "Faizabad", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kushinagar", "Lakhimpur Kheri", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", "Pilibhit", "Pratapgarh", "Raebareli", "Rampur", "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", "Shrawasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", "Unnao", "Varanasi"],
+    "Bihar": ["Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", "Vaishali", "West Champaran"],
+    "West Bengal": ["Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", "Purulia", "South 24 Parganas", "Uttar Dinajpur"],
+    "Odisha": ["Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Kendujhar", "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"],
+    "Punjab": ["Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", "Ludhiana", "Mansa", "Moga", "Muktsar", "Nawanshahr", "Pathankot", "Patiala", "Rupnagar", "Sangrur", "SAS Nagar", "Tarn Taran"],
+    "Haryana": ["Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"],
 }
 
 # Reverse mapping for inputs: Translated text -> English Key
@@ -171,7 +192,7 @@ class ChatService:
         if session.state == "START":
             session.state = "ASK_LOCATION"
             response_text = self._tr('intro', language)
-            options = ["Use Current Location", "Type Manually"]
+            options = ["Use Current Location", "Search Manually"]
             input_type = "location"
 
         elif session.state == "ASK_LOCATION":
@@ -189,7 +210,7 @@ class ChatService:
                         address = location_data.get('raw', f"{session.context.district}, {session.context.state}")
                         
                         response_text = self._tr('found_loc', language, address=address)
-                        options = ["Yes", "No, Type Manually"]
+                        options = ["Yes", "No, Search Manually"]
                         input_type = "options"
                         session.state = "CONFIRM_LOCATION"
                     else:
@@ -203,12 +224,19 @@ class ChatService:
 
             elif user_msg == "Use Current Location":
                 response_text = self._tr('manual_loc_prompt', language)
-                options = ["Use Current Location", "Type Manually"]
+                options = ["Use Current Location", "Search Manually"]
                 input_type = "location"
                 session.state = "ASK_LOCATION"
 
+            elif user_msg == "Search Manually":
+                # Show state selection
+                response_text = self._tr('ask_state', language)
+                options = list(INDIA_STATES_DISTRICTS.keys())
+                input_type = "options"
+                session.state = "SELECT_STATE"
+
             else:
-                # Manual Input Validation
+                # Manual text Input Validation
                 place = map_service.search_place(user_msg)
                 if place:
                      session.context.district = place['name']
@@ -221,20 +249,45 @@ class ChatService:
                     session.context.district = user_msg
                     session.context.state = "Unknown" 
                     response_text = self._tr('manual_fail', language, input=user_msg)
-                    options = ["Red", "Black", "Sandy", "Loam", "Clay", "Alluvial"]
+                    options = ["Red", "Black", "Sandy", "Loam", "Clay"]
                     input_type = "options"
                     session.state = "ASK_SOIL"
+
+        elif session.state == "SELECT_STATE":
+            # User selected a state, show districts
+            if user_msg in INDIA_STATES_DISTRICTS:
+                session.context.state = user_msg
+                response_text = self._tr('ask_district', language)
+                options = INDIA_STATES_DISTRICTS[user_msg]
+                input_type = "options"
+                session.state = "SELECT_DISTRICT"
+            else:
+                # Invalid state, show states again
+                response_text = self._tr('ask_state', language)
+                options = list(INDIA_STATES_DISTRICTS.keys())
+                input_type = "options"
+                session.state = "SELECT_STATE"
+
+        elif session.state == "SELECT_DISTRICT":
+            # User selected a district
+            session.context.district = user_msg
+            response_text = self._tr('ask_soil', language)
+            options = ["Red", "Black", "Sandy", "Loam", "Clay"]
+            input_type = "options"
+            session.state = "ASK_SOIL"
 
         elif session.state == "CONFIRM_LOCATION":
              if user_msg.lower() == "yes" or user_msg == "Yes":
                  response_text = self._tr('ask_soil', language)
-                 options = ["Red", "Black", "Sandy", "Loam", "Clay", "Alluvial"]
+                 options = ["Red", "Black", "Sandy", "Loam", "Clay"]
                  input_type = "options"
                  session.state = "ASK_SOIL"
              else:
-                 response_text = self._tr('ask_manual_dist', language)
-                 input_type = "text"
-                 session.state = "ASK_LOCATION"
+                 # Show state selection instead of text input
+                 response_text = self._tr('ask_state', language)
+                 options = list(INDIA_STATES_DISTRICTS.keys())
+                 input_type = "options"
+                 session.state = "SELECT_STATE"
 
         elif session.state == "ASK_SOIL":
             session.context.soilType = user_msg

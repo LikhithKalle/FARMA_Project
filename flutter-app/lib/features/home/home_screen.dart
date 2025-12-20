@@ -24,6 +24,44 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String _temperature = '--';
   String _weatherCondition = 'Loading...';
   List<dynamic> _alerts = [];
+  
+  // Banner carousel
+  late PageController _pageController;
+  int _currentBannerIndex = 0;
+  
+  // Banner items - Seeds & Fertilizers advertising
+  final List<Map<String, String>> _bannerItems = [
+    {
+      'tag': 'SEEDS',
+      'title': 'Premium Wheat Seeds',
+      'subtitle': 'High yield variety for your farm',
+      'image': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80&fm=webp',
+    },
+    {
+      'tag': 'FERTILIZER',
+      'title': 'Organic NPK Blend',
+      'subtitle': 'Boost your crop growth naturally',
+      'image': 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80&fm=webp',
+    },
+    {
+      'tag': 'SEEDS',
+      'title': 'Hybrid Rice Seeds',
+      'subtitle': 'Disease resistant, high quality',
+      'image': 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&q=80&fm=webp',
+    },
+    {
+      'tag': 'FERTILIZER',
+      'title': 'Bio-Organic Compost',
+      'subtitle': 'Enrich your soil sustainably',
+      'image': 'https://images.unsplash.com/photo-1592419044706-39796d40f98c?w=800&q=80&fm=webp',
+    },
+    {
+      'tag': 'SEEDS',
+      'title': 'Cotton Seeds Pro',
+      'subtitle': 'Best quality fiber production',
+      'image': 'https://images.unsplash.com/photo-1601001815894-4bb6c81416d7?w=800&q=80&fm=webp',
+    },
+  ];
 
   @override
   void initState() {
@@ -32,7 +70,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
+    _pageController = PageController(viewportFraction: 0.95);
+    _startAutoScroll();
     _fetchWeatherData();
+  }
+  
+  void _startAutoScroll() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _currentBannerIndex = (_currentBannerIndex + 1) % _bannerItems.length;
+        _pageController.animateToPage(
+          _currentBannerIndex,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+        _startAutoScroll();
+      }
+    });
   }
 
   Future<void> _fetchWeatherData() async {
@@ -79,6 +133,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void dispose() {
     _controller.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -227,308 +282,235 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
 
-            // Main Content
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  const SizedBox(height: 24),
-                  
-                  // Central pulsing button
-                  Center(
-                    child: GestureDetector(
-                      onTap: () {
-                         Navigator.push(context, MaterialPageRoute(builder: (context) => const AssistantChatScreen()));
-                      },
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            height: 160,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Pulse Effect
-                                AnimatedBuilder(
-                                  animation: _controller,
-                                  builder: (context, child) {
-                                    return Container(
-                                      width: 140 + (_controller.value * 20),
-                                      height: 140 + (_controller.value * 20),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: primaryColor.withOpacity(0.2 * (1 - _controller.value)),
-                                      ),
-                                    );
-                                  },
+            // Auto-scrolling Advertising Banner
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: SizedBox(
+                height: 160,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: _bannerItems.length,
+                    itemBuilder: (context, index) {
+                      final item = _bannerItems[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                item['image']!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (ctx, err, st) => Container(
+                                  color: primaryColor.withOpacity(0.3),
+                                  child: const Icon(Icons.image, size: 50, color: Colors.white54),
                                 ),
-                                Container(
-                                  width: 128,
-                                  height: 128,
-                                  decoration: BoxDecoration(
-                                    color: primaryColor,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: primaryColor.withOpacity(0.4),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Center(
-                                    // Changing to a "nice bot" icon as requested
-                                    child: Icon(Icons.face_retouching_natural, size: 64, color: Color(0xFF111814)), 
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
-                          Text(
-                            TranslationService.tr('planting_today'),
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.lexend(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: textColor,
-                              height: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            TranslationService.tr('ask_advice'),
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.grey[400] : Colors.grey[500],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  if (_alerts.isNotEmpty)
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
-                            image: const DecorationImage(
-                              image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuB4gc--_YmxGvIv8JJHGwrup8T8BEtcNPggY3RSPOph7UZXK44TywKIzRlqCNRJ7VWG3WkJK3rQaGGr-OY6g1iJFhdWGj4o_tLeHHEzaH40kMKwD-vbEzuDOsqMLNMy0d7cplh2Ioo9QhCRtLTMjoNvGubuTMeS4-feqbnEAnBR4y1RuG2HuTgLbnvJJvw3l3YF9bHW1LIZ2Ki8EqnhayWiGPAiK2D80jfGxONOzk99zEmn-730_Xtc6hK2VX0A7ni4aHOGTOC-2eE'),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
-                            ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.warning, color: Colors.amber, size: 24),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      _alerts[0]['headline'] ?? 'Weather Alert',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _alerts[0]['desc'] ?? 'Check for more details.',
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 12,
-                                      ),
-                                    ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    Colors.black.withOpacity(0.7),
+                                    Colors.transparent,
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-
-                  // Grid Layout
-                  // 1. Continue Card (Full Width)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: cardBg,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: borderColor),
-                      boxShadow: isDark ? null : [
-                        BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2))
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              TranslationService.tr('continue'),
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: primaryColor,
-                                letterSpacing: 1.2,
-                              ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Corn planting depth',
-                              style: GoogleFonts.lexend(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Last discussed 2 hours ago...',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDark ? Colors.grey[400] : Colors.grey[500],
+                            Padding(
+                              padding: const EdgeInsets.all(20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: primaryColor,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      item['tag']!,
+                                      style: GoogleFonts.lexend(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF102217),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    item['title']!,
+                                    style: GoogleFonts.lexend(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    item['subtitle']!,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
-                        CircleAvatar(
-                          backgroundColor: isDark ? const Color(0xFF2A4D36) : Colors.grey.shade100,
-                          child: Icon(Icons.arrow_forward, color: textColor),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+            
+            // Page Indicator
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: AnimatedBuilder(
+                animation: _pageController,
+                builder: (context, child) {
+                  double page = 0;
+                  try {
+                    page = _pageController.page ?? 0;
+                  } catch (e) {
+                    page = 0;
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(_bannerItems.length, (index) {
+                      final isActive = (page.round() == index);
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        width: isActive ? 20 : 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: isActive ? primaryColor : (isDark ? Colors.white24 : Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      );
+                    }),
+                  );
+                },
+              ),
+            ),
+
+            // Bot Button Section - Fills remaining space with glass effect
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AssistantChatScreen()));
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: isDark 
+                          ? Colors.white.withOpacity(0.08) 
+                          : Colors.black.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: isDark 
+                            ? Colors.white.withOpacity(0.15) 
+                            : Colors.grey.withOpacity(0.2),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Text ABOVE the icon
+                        Text(
+                          TranslationService.tr('planting_today'),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lexend(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                            height: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          TranslationService.tr('ask_advice'),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: isDark ? Colors.grey[400] : Colors.grey[500],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Chat Bot Icon
+                        SizedBox(
+                          width: 110,
+                          height: 110,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Pulse Effect
+                              AnimatedBuilder(
+                                animation: _controller,
+                                builder: (context, child) {
+                                  return Container(
+                                    width: 95 + (_controller.value * 15),
+                                    height: 95 + (_controller.value * 15),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: primaryColor.withOpacity(0.2 * (1 - _controller.value)),
+                                    ),
+                                  );
+                                },
+                              ),
+                              Container(
+                                width: 85,
+                                height: 85,
+                                decoration: BoxDecoration(
+                                  color: primaryColor,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: primaryColor.withOpacity(0.4),
+                                      blurRadius: 16,
+                                      offset: const Offset(0, 8),
+                                    ),
+                                  ],
+                                ),
+                                child: const Center(
+                                  child: Icon(Icons.face_retouching_natural, size: 46, color: Color(0xFF111814)),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      // 2. Crop Guide Card
-                      Expanded(
-                        child: Container(
-                          height: 160,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: isDark 
-                                  ? [const Color(0xFF1A3826), const Color(0xFF102217)]
-                                  : [const Color(0xFFE0FADD), Colors.white],
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                            border: isDark ? null : Border.all(color: Colors.grey.shade100),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF2A4D36) : Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.menu_book, color: Colors.green, size: 24),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    TranslationService.tr('crop_guide'),
-                                    style: GoogleFonts.lexend(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    TranslationService.tr('best_practices'),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: isDark ? Colors.grey[400] : Colors.grey[500],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      // 3. Advisory Card
-                      Expanded(
-                        child: Container(
-                          height: 160,
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: isDark 
-                                  ? [const Color(0xFF3D3118), const Color(0xFF102217)]
-                                  : [const Color(0xFFFFF3DC), Colors.white],
-                            ),
-                            borderRadius: BorderRadius.circular(24),
-                            border: isDark ? null : Border.all(color: Colors.grey.shade100),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: isDark ? const Color(0xFF4D3E2A) : Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.support_agent, color: Colors.orange, size: 24),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    TranslationService.tr('advisory'),
-                                    style: GoogleFonts.lexend(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor,
-                                    ),
-                                  ),
-                                  Text(
-                                    TranslationService.tr('talk_experts'),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: isDark ? Colors.grey[400] : Colors.grey[500],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                ],
+                ),
               ),
             ),
+
+            const SizedBox(height: 6),
           ],
         ),
       ),
