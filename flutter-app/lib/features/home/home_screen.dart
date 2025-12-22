@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import '../../services/weather_service.dart';
 import '../../services/translation_service.dart';
 import '../chat/assistant_chat_screen.dart';
+import '../../services/auth_service.dart';
 import '../guide/crop_guide_screen.dart';
 import '../advisory/advisory_screen.dart';
 import '../market/marketplace_screen.dart';
@@ -24,6 +25,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   String _temperature = '--';
   String _weatherCondition = 'Loading...';
   List<dynamic> _alerts = [];
+  String _userName = 'Farmer';
+  String _greeting = 'Hello';
   
   // Banner carousel
   late PageController _pageController;
@@ -73,6 +76,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _pageController = PageController(viewportFraction: 0.95);
     _startAutoScroll();
     _fetchWeatherData();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final name = await AuthService.getUserName();
+    _updateGreeting();
+    if (mounted) {
+      setState(() {
+        _userName = name;
+      });
+    }
+  }
+
+  void _updateGreeting() {
+    final hour = DateTime.now().hour;
+    String key;
+    if (hour < 12) {
+      key = 'good_morning';
+    } else if (hour < 17) {
+      key = 'good_afternoon';
+    } else {
+      key = 'good_evening';
+    }
+    
+    if (mounted) {
+      setState(() {
+         // We will store the key, and translate it in build
+        _greeting = key;
+      });
+    }
   }
   
   void _startAutoScroll() {
@@ -227,27 +260,31 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            TranslationService.tr('good_morning'),
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: isDark ? Colors.grey[400] : Colors.grey[500],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              TranslationService.tr(_greeting),
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.grey[400] : Colors.grey[500],
+                              ),
                             ),
-                          ),
-                          Text(
-                            'Farmer John',
-                            style: GoogleFonts.lexend(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w800,
-                              color: textColor,
-                              height: 1.1,
+                            Text(
+                              _userName,
+                              style: GoogleFonts.lexend(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                                height: 1.1,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,

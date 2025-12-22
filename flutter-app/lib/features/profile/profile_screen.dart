@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/translation_service.dart';
+import '../../services/auth_service.dart';
 import '../home/home_screen.dart';
 import '../guide/crop_guide_screen.dart';
 import '../advisory/advisory_screen.dart';
@@ -20,6 +21,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // State for toggles
   bool _voiceOutput = true;
   bool _notifications = false;
+  String _userName = 'Rajesh Kumar';
+  String _userPhone = '+91 98765 43210';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final name = await AuthService.getUserName();
+    final phone = await AuthService.getUserPhone();
+    if (mounted) {
+      setState(() {
+        _userName = name;
+        _userPhone = phone;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,8 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Rajesh Kumar',
-                            style: GoogleFonts.lexend(
+                            _userName,
+                            style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: textColor,
@@ -173,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            _buildDetailRow(Icons.call, TranslationService.tr('phone_number'), '+91 98765 43210', primaryColor, textColor),
+                            _buildDetailRow(Icons.call, TranslationService.tr('phone_number'), _userPhone, primaryColor, textColor),
                             Divider(color: borderColor, height: 32),
                             _buildDetailRow(Icons.landscape, TranslationService.tr('farm_size'), '5 Acres', primaryColor, textColor),
                           ],
@@ -262,13 +282,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
-                        onPressed: () {
+                        onPressed: () async {
                           // Logout logic
-                          Navigator.pushAndRemoveUntil(
-                            context, 
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
-                            (route) => false,
-                          );
+                          await AuthService().logout();
+                          if (context.mounted) {
+                            Navigator.pushAndRemoveUntil(
+                              context, 
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                              (route) => false,
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,

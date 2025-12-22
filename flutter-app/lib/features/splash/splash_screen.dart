@@ -3,6 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../language/language_selection_screen.dart';
+import '../../services/translation_service.dart';
+import '../../services/auth_service.dart';
+import '../home/main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,16 +18,48 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Navigate to the LanguageSelectionScreen after a delay
-    Timer(const Duration(seconds: 4), () {
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      // Run minimum delay and initialization concurrently
+      final results = await Future.wait([
+        Future.delayed(const Duration(milliseconds: 2000)), // Reduced to 2s
+        _initLogic(),
+      ]);
+      
+      final bool isLoggedIn = results[1] as bool;
+
+      if (mounted) {
+        if (isLoggedIn) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LanguageSelectionScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Startup validation failed: $e");
+      // Fallback navigation
       if (mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const LanguageSelectionScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const LanguageSelectionScreen()),
         );
       }
-    });
+    }
+  }
+
+  Future<bool> _initLogic() async {
+    // 1. Load Language
+    await TranslationService.loadLanguage();
+    
+    // 2. Check Auto-Login
+    final authService = AuthService();
+    return await authService.tryAutoLogin();
   }
 
   @override

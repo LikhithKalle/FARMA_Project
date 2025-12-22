@@ -6,7 +6,7 @@ class ApiService {
   // Use LAN IP for Physical Device.
   // Use 10.0.2.2 for Android Emulator.
   // Use LAN IP for Physical Device.
-  static const String baseUrl = 'http://192.168.137.1:8000';
+  static const String baseUrl = 'http://20.20.4.122:8000';
   // static const String baseUrl = 'http://10.0.2.2:8000'; 
   
   static final ApiService _instance = ApiService._internal();

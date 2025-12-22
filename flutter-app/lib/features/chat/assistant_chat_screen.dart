@@ -7,6 +7,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import '../../services/api_service.dart';
 import '../../services/translation_service.dart';
 import '../recommendations/recommendation_result_screen.dart';
+import 'map_picker_screen.dart';
+import 'package:latlong2/latlong.dart';
 
 class AssistantChatScreen extends StatefulWidget {
   const AssistantChatScreen({super.key});
@@ -149,6 +151,18 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
           _inputType = "text"; // Allow retry
         });
       }
+    }
+  }
+
+  Future<void> _handleManualLocation() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MapPickerScreen()),
+    );
+
+    if (result != null && result is LatLng) {
+      // Send LOC:{lat},{long}
+       _sendMessage("LOC:${result.latitude},${result.longitude}");
     }
   }
 
@@ -318,24 +332,27 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
                 children: _currentOptions!.asMap().entries.map((entry) {
                     final int idx = entry.key;
                     final String option = entry.value;
-                    // Fix: Check inputType OR string match to support translations
                     final bool isLocation = (_inputType == "location" && idx == 0) || option == "Use Current Location";
+                    final bool isManual = option == "Search Manually";
                     
                     return ActionChip(
                         label: Text(
                              option, 
                              style: GoogleFonts.lexend(
-                                 color: isLocation ? backgroundDark : primaryColor,
+                                 color: (isLocation || isManual) ? backgroundDark : primaryColor,
                                  fontWeight: FontWeight.bold
                              )
                         ),
-                        backgroundColor: isLocation ? primaryColor : (isDark ? surfaceHighlight : Colors.grey[100]),
+                        backgroundColor: (isLocation || isManual) ? primaryColor : (isDark ? surfaceHighlight : Colors.grey[100]),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        avatar: isLocation ? const Icon(Icons.my_location, size: 16, color: backgroundDark) : null,
+                        avatar: isLocation ? const Icon(Icons.my_location, size: 16, color: backgroundDark) : 
+                                (isManual ? const Icon(Icons.map, size: 16, color: backgroundDark) : null),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         onPressed: () {
                            if (isLocation) {
                                _handleLocation();
+                           } else if (isManual) {
+                               _handleManualLocation();
                            } else {
                                _sendMessage(option);
                            }
@@ -429,23 +446,27 @@ class _AssistantChatScreenState extends State<AssistantChatScreen> {
           final int idx = entry.key;
           final String option = entry.value;
           final bool isLocation = (_inputType == "location" && idx == 0) || option == "Use Current Location";
+          final bool isManual = option == "Search Manually";
           
           return ActionChip(
             label: Text(
               option,
               style: GoogleFonts.lexend(
-                color: isLocation ? backgroundDark : primaryColor,
+                color: (isLocation || isManual) ? backgroundDark : primaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
               ),
             ),
-            backgroundColor: isLocation ? primaryColor : (isDark ? surfaceHighlight : Colors.grey[100]),
+            backgroundColor: (isLocation || isManual) ? primaryColor : (isDark ? surfaceHighlight : Colors.grey[100]),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            avatar: isLocation ? const Icon(Icons.my_location, size: 16, color: backgroundDark) : null,
+            avatar: isLocation ? const Icon(Icons.my_location, size: 16, color: backgroundDark) : 
+                    (isManual ? const Icon(Icons.map, size: 16, color: backgroundDark) : null),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             onPressed: () {
               if (isLocation) {
                 _handleLocation();
+              } else if (isManual) {
+                _handleManualLocation();
               } else {
                 _sendMessage(option);
               }

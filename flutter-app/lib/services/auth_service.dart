@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -30,6 +31,10 @@ class AuthService {
       final token = response['access_token'];
       if (token != null) {
         _api.setToken(token);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        if (response['full_name'] != null) await prefs.setString('user_name', response['full_name']);
+        if (response['phone'] != null) await prefs.setString('user_phone', response['phone']);
         return {'success': true, 'token': token};
       }
       return {'success': false, 'error': 'No token received'};
@@ -42,7 +47,7 @@ class AuthService {
       } else if (errorMsg.contains('Invalid password')) {
         return {'success': false, 'error': 'Invalid password.'};
       }
-      return {'success': false, 'error': 'Login failed. Please check your credentials.'};
+      return {'success': false, 'error': 'Login failed: $errorMsg'};
     }
   }
 
@@ -56,13 +61,51 @@ class AuthService {
       final token = response['access_token'];
       if (token != null) {
         _api.setToken(token);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', token);
+        if (response['full_name'] != null) await prefs.setString('user_name', response['full_name']);
+        if (response['phone'] != null) await prefs.setString('user_phone', response['phone']);
         return {'success': true};
       }
       return {'success': false, 'error': 'Invalid response from server'};
     } catch (e) {
       print('OTP Verification Failed: $e');
       // If ApiService throws exception with message, use it
-      return {'success': false, 'error': e.toString().replaceAll('Exception:', '').trim()};
+      return {'success': false, 'error': e.toString()};
     }
+  }
+
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    await prefs.remove('user_name');
+    await prefs.remove('user_phone');
+    _api.setToken(""); // Clear in memory
+  }
+  
+  static Future<String> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    String name = prefs.getString('user_name') ?? 'Farmer';
+    if (name.isEmpty) return name;
+    return name.split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
+  }
+
+  static Future<String> getUserPhone() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_phone') ?? '';
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    if (token != null && token.isNotEmpty) {
+      _api.setToken(token);
+      return true;
+    }
+    return false;
   }
 }

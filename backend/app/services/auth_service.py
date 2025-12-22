@@ -134,7 +134,14 @@ def verify_otp_step2(phone: str, otp: str):
                 
             # Create Access Token
             access_token = create_access_token(data={"sub": user.phone, "user_id": user.id})
-            return {"access_token": access_token, "token_type": "bearer", "user_id": user.id}
+            return {
+                "access_token": access_token, 
+                "token_type": "bearer", 
+                "user_id": user.id,
+                "full_name": user.full_name,
+                "phone": user.phone,
+                "language": user.language
+            }
     except Exception as e:
         print(f"DEBUG: Error during user creation: {e}")
         # Raise exception to be caught by router
@@ -163,7 +170,14 @@ def login_user(phone: str, password: str):
         
         # Password verified! Create token
         access_token = create_access_token(data={"sub": user.phone, "user_id": user.id})
-        return {"access_token": access_token, "token_type": "bearer", "user_id": user.id}
+        return {
+            "access_token": access_token, 
+            "token_type": "bearer", 
+            "user_id": user.id,
+            "full_name": user.full_name,
+            "phone": user.phone,
+            "language": user.language
+        }
 
 def create_access_token(data: dict):
     to_encode = data.copy()

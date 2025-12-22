@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationService {
   static final ValueNotifier<Locale> locale = ValueNotifier(const Locale('en'));
 
-  static void changeLocale(String code) {
+  static Future<void> loadLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? langCode = prefs.getString('language_code');
+    if (langCode != null) {
+      locale.value = Locale(langCode);
+    }
+  }
+
+  static Future<void> changeLocale(String code) async {
     locale.value = Locale(code);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('language_code', code);
   }
 
   static String tr(String key) {
@@ -12,9 +23,22 @@ class TranslationService {
     return _localizedValues[code]?[key] ?? key;
   }
 
+  // Helper for dynamic content (e.g. database content)
+  static String getContent(dynamic data) {
+    if (data == null) return '';
+    if (data is String) return data;
+    if (data is Map) {
+      final code = locale.value.languageCode;
+      return data[code] ?? data['en'] ?? '';
+    }
+    return '';
+  }
+
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
       'good_morning': 'Good Morning,',
+      'good_afternoon': 'Good Afternoon,',
+      'good_evening': 'Good Evening,',
       'planting_today': 'What are we planting today?',
       'ask_advice': 'Tap to ask for advice',
       'continue': 'CONTINUE',
@@ -113,6 +137,8 @@ class TranslationService {
     },
     'hi': {
       'good_morning': 'सुप्रभात,',
+      'good_afternoon': 'शुभ दोपहर,',
+      'good_evening': 'शुभ संध्या,',
       'planting_today': 'आज हम क्या लगा रहे हैं?',
       'ask_advice': 'सलाह के लिए टैप करें',
       'continue': 'जारी रखें',
@@ -210,6 +236,8 @@ class TranslationService {
     },
     'te': {
       'good_morning': 'శుభోదయం,',
+      'good_afternoon': 'శుభ మధ్యాహ్నం,',
+      'good_evening': 'శుభ సాయంత్రం,',
       'planting_today': 'ఈ రోజు మనం ఏమి సాగు చేస్తున్నాం?',
       'ask_advice': 'సలహా కోసం నొక్కండి',
       'continue': 'కొనసాగించు',
